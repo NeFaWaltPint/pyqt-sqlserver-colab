@@ -44,7 +44,17 @@ En `.venv\Lib\site-packages\QtDesigner\designer.exe` se encuentra el ejecutable 
 Desde este se puede exportar el código python de la parte gráfica, guardarlo como `view.py`
 
 #### Variables
-Variables de conexión a db en `db_conf.ini`
+Variables de conexión a db en archivo `db_conf.ini`, si no existe crearlo con lo siguiente:
+```
+[SQLSERVER]
+dialect = mssql+pyodbc
+username = pruebausuario
+password = password
+host = localhost
+port = 1433
+database = BaseDatosPrueba
+driver = ODBC Driver 17 for SQL Server
+```
 
 ___
 Ejecución desde `main.py`
