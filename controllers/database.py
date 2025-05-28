@@ -29,7 +29,7 @@ params = urllib.parse.quote_plus(
 
 # Crear el engine de SQLAlchemy
 connection_url = f"{dialect}:///?odbc_connect={params}"
-engine = create_engine(connection_url)
+Engine = create_engine(connection_url)
 
 # Crear una fábrica de sesiones
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=Engine)

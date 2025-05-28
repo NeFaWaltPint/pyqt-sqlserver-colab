@@ -29,7 +29,7 @@ ALTER ROLE db_owner ADD MEMBER pruebausuario;
 Go
 exit
 
-# inyectar script de creación de tablas
+# inyectar script de creación de tablas, NO ES NECESARIO si ya define los modelos desde `models/models.py`
 sqlcmd -S localhost -U pruebausuario -P password -d BaseDatosPrueba -i creacion_tablas_migration_up.sql
 ```
 
@@ -56,5 +56,14 @@ database = BaseDatosPrueba
 driver = ODBC Driver 17 for SQL Server
 ```
 
-___
-Ejecución desde `main.py`
+## Ejecución desde `main.py`
+Para crear o borrar las tablas ya no es necesario inyección de sql si tiene definido el modelo en `models.py`.
+
+```cmd
+# Para crear las tablas ejecutar:
+python main.py -c
+
+# Para borrar las tabllas ejecutar:
+python main.py -d
+```
+

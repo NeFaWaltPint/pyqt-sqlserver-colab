@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from controllers.database import SessionLocal
+import argparse
+from controllers.create_drop_db import checkCreateDropDB
+from controllers.database import SessionLocal, Engine
 from sqlalchemy import text
+
+from models.models import Base
+
 def main():
+
+    checkCreateDropDB()
+    
     # Crear una sesión
     session = SessionLocal()
 
@@ -14,6 +22,8 @@ def main():
         """))
         for row in result:
             print(f" - {row[0]}")
+    except Exception as e:
+        print(f"Ups! Error: {e}")
     finally:
         session.close()
 
