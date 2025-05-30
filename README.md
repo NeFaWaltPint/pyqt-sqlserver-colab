@@ -12,7 +12,7 @@ Un repo para un ejercicio de python con interfaz qt y conexión a bd sql server
 sqlcmd -S localhost -E
 
 # dentro de sql server crear usuario
-CREATE LOGIN pruebausuario WITH PASSWORD = 'password';
+CREATE LOGIN admin2 WITH PASSWORD = '00123';
 Go
 
 # crear bd y usarla
@@ -21,11 +21,11 @@ USE BaseDatosPrueba;
 Go
 
 # agregar el usuario a la bd
-CREATE USER pruebausuario FOR LOGIN pruebausuario;
+CREATE USER admin2 FOR LOGIN admin2;
 Go
 
 # dar permisos al usuario y salir
-ALTER ROLE db_owner ADD MEMBER pruebausuario;
+ALTER ROLE db_owner ADD MEMBER admin2;
 Go
 exit
 
