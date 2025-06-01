@@ -13,13 +13,13 @@ from PyQt6.QtWidgets import (
 from views.dynamic_form import DynamicForm
 
 class MainWindow(QMainWindow):
-    def __init__(self, model_classes):
+    def __init__(self, model_classes, session):
         super().__init__()
         self.setWindowTitle("Panel de Formularios")
 
         tabs = QTabWidget()
         for model in model_classes:
-            form = DynamicForm(model)
+            form = DynamicForm(model, session)
             tabs.addTab(form, model.__tablename__)
         self.setCentralWidget(tabs)
 
@@ -27,12 +27,13 @@ def main():
 
     checkCreateDropDB()
 
-    app = QApplication(sys.argv)
-    window = MainWindow(Base.__subclasses__())
-    window.show()
-    sys.exit(app.exec())
     # Crear una sesión
     session = SessionLocal()
+
+    app = QApplication(sys.argv)
+    window = MainWindow(Base.__subclasses__(), session)
+    window.show()
+    sys.exit(app.exec())
 
     try:
         result = session.execute(text("""
