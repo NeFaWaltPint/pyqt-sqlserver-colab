@@ -1,16 +1,27 @@
 # -*- coding: utf-8 -*-
 
-import argparse
 from controllers.create_drop_db import checkCreateDropDB
-from controllers.database import SessionLocal, Engine
+from controllers.database import SessionLocal
 from sqlalchemy import text
 
-from models.models import Base
+from models.models import (Turno, EmpleadoMesa)
+import sys
+from PyQt6.QtWidgets import (
+    QApplication
+)
+
+from views.dynamic_form import DynamicForm
 
 def main():
 
     checkCreateDropDB()
-    
+
+    app = QApplication(sys.argv)
+    form1 = DynamicForm(Turno)
+    form1.show()
+    form2 = DynamicForm(EmpleadoMesa)
+    form2.show()
+    sys.exit(app.exec())
     # Crear una sesión
     session = SessionLocal()
 
