@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QFormLayout, QLineEdit,
-    QDateEdit, QTimeEdit, QSpinBox, QDoubleSpinBox, QPushButton, QMessageBox
+    QDateEdit, QTimeEdit, QSpinBox, QDoubleSpinBox, QPushButton, QMessageBox, QHBoxLayout
 )
-from PyQt6.QtCore import QDate, QTime
+from PyQt6.QtCore import QDate, QTime, QDateTime
 from sqlalchemy import Integer, String, Date, DateTime, Time, Float, Numeric, Column
 from sqlalchemy.orm import DeclarativeMeta
 import sys
@@ -17,12 +17,17 @@ class DynamicForm(QWidget):
         self.setLayout(self.layout)
 
         for column in model_class.__table__.columns:
-            print(column, column.primary_key, column.autoincrement, column.nullable)
-            if column.primary_key and column.autoincrement:
-                continue  # omitimos el ID autoincremental
-
             field_name = column.name
             field_type = type(column.type)
+
+            # Caso especial: clave primaria autoincremental → solo lectura
+            if column.primary_key and column.autoincrement:
+                widget = QLineEdit()
+                widget.setReadOnly(True)
+                widget.setPlaceholderText("Autogenerado")
+                self.inputs[field_name] = widget
+                self.layout.addRow(f"{field_name} (PK)", widget)
+                continue
 
             widget = None
             if field_type in [String]:
@@ -41,7 +46,25 @@ class DynamicForm(QWidget):
                 widget = QTimeEdit()
                 widget.setTime(QTime.currentTime())
             elif field_type == DateTime:
-                widget = QLineEdit()  # podrías crear tu propio selector de datetime
+                # Usamos QDateEdit + QTimeEdit en una fila horizontal
+                date_widget = QDateEdit()
+                date_widget.setCalendarPopup(True)
+                date_widget.setDate(QDate.currentDate())
+
+                time_widget = QTimeEdit()
+                time_widget.setTime(QTime.currentTime())
+
+                container = QWidget()
+                hbox = QHBoxLayout()
+                hbox.addWidget(date_widget)
+                hbox.addWidget(time_widget)
+                hbox.setContentsMargins(0, 0, 0, 0)
+                container.setLayout(hbox)
+
+                # Guardamos como tupla para extraer luego
+                self.inputs[field_name] = (date_widget, time_widget)
+                self.layout.addRow(field_name, container)
+                continue  # ya añadimos el layout, no añadir más abajo
 
             if widget:
                 self.inputs[field_name] = widget
@@ -55,7 +78,12 @@ class DynamicForm(QWidget):
     def on_submit(self):
         data = {}
         for field, widget in self.inputs.items():
-            if isinstance(widget, QLineEdit):
+            if isinstance(widget, tuple) and isinstance(widget[0], QDateEdit) and isinstance(widget[1], QTimeEdit):
+                # Caso DateTime
+                qdate = widget[0].date()
+                qtime = widget[1].time()
+                data[field] = QDateTime(qdate, qtime).toPyDateTime()
+            elif isinstance(widget, QLineEdit):
                 data[field] = widget.text()
             elif isinstance(widget, QSpinBox):
                 data[field] = widget.value()
@@ -66,5 +94,5 @@ class DynamicForm(QWidget):
             elif isinstance(widget, QTimeEdit):
                 data[field] = widget.time().toPyTime()
 
-        # Aquí podrías usar `crud.create_record(db, self.model_class, data)`
+        # Mostrar los datos
         QMessageBox.information(self, "Formulario", f"Datos ingresados:\n{data}")

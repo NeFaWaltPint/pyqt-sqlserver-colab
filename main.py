@@ -4,23 +4,32 @@ from controllers.create_drop_db import checkCreateDropDB
 from controllers.database import SessionLocal
 from sqlalchemy import text
 
-from models.models import (Turno, EmpleadoMesa)
+from models.models import (Base, Turno, EmpleadoMesa)
 import sys
 from PyQt6.QtWidgets import (
-    QApplication
+    QApplication, QMainWindow, QTabWidget
 )
 
 from views.dynamic_form import DynamicForm
+
+class MainWindow(QMainWindow):
+    def __init__(self, model_classes):
+        super().__init__()
+        self.setWindowTitle("Panel de Formularios")
+
+        tabs = QTabWidget()
+        for model in model_classes:
+            form = DynamicForm(model)
+            tabs.addTab(form, model.__tablename__)
+        self.setCentralWidget(tabs)
 
 def main():
 
     checkCreateDropDB()
 
     app = QApplication(sys.argv)
-    form1 = DynamicForm(Turno)
-    form1.show()
-    form2 = DynamicForm(EmpleadoMesa)
-    form2.show()
+    window = MainWindow(Base.__subclasses__())
+    window.show()
     sys.exit(app.exec())
     # Crear una sesión
     session = SessionLocal()

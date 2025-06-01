@@ -67,3 +67,4 @@ python main.py -c
 python main.py -d
 ```
 
+_**Nota:** Si el drop de las tablas da error, puede deberse a una tabla huerfana que ya no coincide en nombre en el modelo actual, hay que entrar manualmente a la bd y borrarla, luego de eso mientras db y modelo se mantengan sincronizados no debe dar problema_ 
