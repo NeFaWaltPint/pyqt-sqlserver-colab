@@ -18,7 +18,8 @@ def get_record(db: Session, model_class, record_id):
     return db.query(model_class).get(record_id)
 
 def get_all_records(db: Session, model_class, skip=0, limit=100):
-    return db.query(model_class).offset(skip).limit(limit).all()
+    primary_key = list(model_class.__table__.primary_key.columns)[0]
+    return db.query(model_class).order_by(primary_key).offset(skip).limit(limit).all()
 
 # ✏️ UPDATE
 def update_record(db: Session, model_class, record_id, updates: dict):
@@ -32,7 +33,11 @@ def update_record(db: Session, model_class, record_id, updates: dict):
     return record
 
 # ❌ DELETE
-def delete_record(db: Session, model_class, record_id):
+def delete_record(db: Session, model_class, record_id=None, record_obj=None):
+    if record_obj:
+        db.delete(record_obj)
+        db.commit()
+        return record_obj
     record = db.query(model_class).get(record_id)
     if not record:
         return None

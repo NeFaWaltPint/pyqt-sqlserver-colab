@@ -1,22 +1,22 @@
 import datetime
 from PyQt6.QtWidgets import (
-    QApplication, QWidget, QFormLayout, QLineEdit,
+    QWidget, QFormLayout, QLineEdit,
     QDateEdit, QTimeEdit, QSpinBox, QDoubleSpinBox, QPushButton, QMessageBox, QHBoxLayout
 )
 from PyQt6.QtCore import QDate, QTime, QDateTime
 from sqlalchemy import Integer, String, Date, DateTime, Time, Float, Numeric, Column
 from sqlalchemy.orm import DeclarativeMeta, Session
-import sys
 
-from controllers.crud import create_record
+from controllers.crud import create_record, update_record
 
 class DynamicForm(QWidget):
     def __init__(self, model_class: DeclarativeMeta, db: Session):
         super().__init__()
-        self.setWindowTitle(f"Formulario: {model_class.__name__}")
         self.model_class = model_class
         self.db = db
-        self.inputs = {}  # almacena los widgets por nombre de campo
+        self.record = None
+        self.inputs = {}
+
         self.layout = QFormLayout()
         self.setLayout(self.layout)
 
@@ -25,7 +25,6 @@ class DynamicForm(QWidget):
             col_type = column.type
             field_type = type(col_type)
 
-            # Caso especial: clave primaria autoincremental → solo lectura
             if column.primary_key and column.autoincrement:
                 widget = QLineEdit()
                 widget.setReadOnly(True)
@@ -51,11 +50,9 @@ class DynamicForm(QWidget):
                 widget = QTimeEdit()
                 widget.setTime(QTime.currentTime())
             elif field_type == DateTime:
-                # Usamos QDateEdit + QTimeEdit en una fila horizontal
                 date_widget = QDateEdit()
                 date_widget.setCalendarPopup(True)
                 date_widget.setDate(QDate.currentDate())
-
                 time_widget = QTimeEdit()
                 time_widget.setTime(QTime.currentTime())
 
@@ -66,29 +63,27 @@ class DynamicForm(QWidget):
                 hbox.setContentsMargins(0, 0, 0, 0)
                 container.setLayout(hbox)
 
-                # Guardamos como tupla para extraer luego
                 self.inputs[field_name] = (date_widget, time_widget)
                 self.layout.addRow(field_name, container)
-                continue  # ya añadimos el layout, no añadir más abajo
+                continue
 
             if widget:
                 self.inputs[field_name] = widget
                 self.layout.addRow(field_name, widget)
 
-        # Botón de limpiar
         clear_btn = QPushButton("Limpiar")
         clear_btn.clicked.connect(self.clear_form)
-        self.layout.addRow(clear_btn)
-        # Botón de enviar
         submit_btn = QPushButton("Guardar")
         submit_btn.clicked.connect(self.on_submit)
+
+        self.layout.addRow(clear_btn)
         self.layout.addRow(submit_btn)
 
     def fill_from_record(self, record):
+        self.record = record
         for field, widget in self.inputs.items():
             value = getattr(record, field, None)
-
-            if isinstance(widget, tuple):  # DateTime (QDateEdit + QTimeEdit)
+            if isinstance(widget, tuple):  # DateTime
                 if isinstance(value, datetime.datetime):
                     widget[0].setDate(QDate(value.date()))
                     widget[1].setTime(QTime(value.time()))
@@ -106,9 +101,9 @@ class DynamicForm(QWidget):
                     widget.setTime(QTime(value))
 
     def clear_form(self):
-        for field, widget in self.inputs.items():
-            if isinstance(widget, tuple) and isinstance(widget[0], QDateEdit) and isinstance(widget[1], QTimeEdit):
-                # DateTime combo
+        self.record = None
+        for _, widget in self.inputs.items():
+            if isinstance(widget, tuple):
                 widget[0].setDate(QDate.currentDate())
                 widget[1].setTime(QTime.currentTime())
             elif isinstance(widget, QLineEdit):
@@ -123,8 +118,7 @@ class DynamicForm(QWidget):
     def on_submit(self):
         data = {}
         for field, widget in self.inputs.items():
-            if isinstance(widget, tuple) and isinstance(widget[0], QDateEdit) and isinstance(widget[1], QTimeEdit):
-                # Caso DateTime
+            if isinstance(widget, tuple):
                 qdate = widget[0].date()
                 qtime = widget[1].time()
                 data[field] = QDateTime(qdate, qtime).toPyDateTime()
@@ -139,27 +133,38 @@ class DynamicForm(QWidget):
             elif isinstance(widget, QTimeEdit):
                 data[field] = widget.time().toPyTime()
 
-            # ❗ Eliminar claves primarias autoincrementales vacías
-            for column in self.model_class.__table__.columns:
-                if column.primary_key and column.autoincrement:
-                    value = data.get(column.name)
-                    if not value:  # None, '' o equivalente
-                        data.pop(column.name, None)
+        id_update = None
+        for column in self.model_class.__table__.columns:
+            if column.primary_key and column.autoincrement:
+                id_update = data.get(column.name)
+                data.pop(column.name, None)
 
-        QMessageBox.information(self, "Formulario", f"Datos ingresados:\n{data}")
+        if id_update:
+            confirmar = QMessageBox.question(
+                self, "Confirmar actualización",
+                "¿Estás seguro de que deseas actualizar este registro?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+
+            if confirmar == QMessageBox.StandardButton.Yes:
+                try:
+                    update_record(self.db, self.model_class, id_update, data)
+                    QMessageBox.information(self, "Éxito", "Registro actualizado correctamente.")
+                    self.fill_from_record(self.record)
+                except Exception as e:
+                    QMessageBox.critical(self, "Error", f"Fallo al actualizar: {str(e)}")
+            return
 
         confirmar = QMessageBox.question(
-            self,
-            "Confirmar guardado",
-            "¿Estas seguro de que deseas guardar este registro?",
+            self, "Confirmar guardado",
+            "¿Estás seguro de que deseas guardar este registro?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
 
         if confirmar == QMessageBox.StandardButton.Yes:
             try:
                 record = create_record(self.db, self.model_class, data)
-                QMessageBox.information(self, "Éxito", f"Registro creado Ok")
+                QMessageBox.information(self, "Éxito", "Registro guardado correctamente.")
                 self.fill_from_record(record)
             except Exception as e:
-                QMessageBox.critical(self, "Error", f"No se pudo guardar: {str(e)}")
-                pass
+                QMessageBox.critical(self, "Error", f"Fallo al guardar: {str(e)}")
