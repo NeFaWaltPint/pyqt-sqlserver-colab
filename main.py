@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
 
 from views.dynamic_form import DynamicForm
 from views.list import ListView
-
+from views.static_view_generator import generate_static_code, load_form_from_model
 
 class MainWindow(QMainWindow):
     def __init__(self, model_classes, session):
@@ -26,17 +26,25 @@ class MainWindow(QMainWindow):
         for model in model_classes:
             sub_tabs = QTabWidget()
             list_view = ListView(model, session)
-            form = DynamicForm(model, session)
+            #form = DynamicForm(model, session)
+            form_static = load_form_from_model(model, session)
+            
+            # code = generate_static_code(model)
+            # filename = f"{model.__tablename__}.py"
+            # with open("views/forms/" + filename, "w", encoding="utf-8") as f:
+            #     f.write(code)
+         
             sub_tabs.addTab(list_view, "Datos")
-            sub_tabs.addTab(form, "Formulario")
+            #sub_tabs.addTab(form, "Formulario")
+            sub_tabs.addTab(form_static, "Formulario")
             list_view.registro_seleccionado.connect(
-                handle_lambda_shit(form, sub_tabs)
+                handle_lambda_shit(form_static, sub_tabs)
             )
             container = QWidget()
             layout = QVBoxLayout()
             layout.addWidget(sub_tabs)
             container.setLayout(layout)
-
+        
             model_tabs.addTab(container, model.__tablename__)
 
         self.setCentralWidget(model_tabs)

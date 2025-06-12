@@ -17,67 +17,67 @@ class DynamicForm(QWidget):
         self.record = None
         self.inputs = {}
 
-        self.layout = QFormLayout()
-        self.setLayout(self.layout)
-
-        for column in model_class.__table__.columns:
-            field_name = column.name
-            col_type = column.type
-            field_type = type(col_type)
-
-            if column.primary_key and column.autoincrement:
-                widget = QLineEdit()
-                widget.setReadOnly(True)
-                widget.setPlaceholderText("Autogenerado")
-                self.inputs[field_name] = widget
-                self.layout.addRow(f"{field_name} (PK)", widget)
-                continue
-
-            widget = None
-            if field_type in [String]:
-                widget = QLineEdit()
-            elif field_type in [Integer]:
-                widget = QSpinBox()
-                widget.setMaximum(1_000_000)
-            elif isinstance(col_type, (Float, Numeric)):
-                widget = QDoubleSpinBox()
-                widget.setMaximum(1_000_000)
-            elif field_type == Date:
-                widget = QDateEdit()
-                widget.setCalendarPopup(True)
-                widget.setDate(QDate.currentDate())
-            elif field_type == Time:
-                widget = QTimeEdit()
-                widget.setTime(QTime.currentTime())
-            elif field_type == DateTime:
-                date_widget = QDateEdit()
-                date_widget.setCalendarPopup(True)
-                date_widget.setDate(QDate.currentDate())
-                time_widget = QTimeEdit()
-                time_widget.setTime(QTime.currentTime())
-
-                container = QWidget()
-                hbox = QHBoxLayout()
-                hbox.addWidget(date_widget)
-                hbox.addWidget(time_widget)
-                hbox.setContentsMargins(0, 0, 0, 0)
-                container.setLayout(hbox)
-
-                self.inputs[field_name] = (date_widget, time_widget)
-                self.layout.addRow(field_name, container)
-                continue
-
-            if widget:
-                self.inputs[field_name] = widget
-                self.layout.addRow(field_name, widget)
-
-        clear_btn = QPushButton("Limpiar")
-        clear_btn.clicked.connect(self.clear_form)
-        submit_btn = QPushButton("Guardar")
-        submit_btn.clicked.connect(self.on_submit)
-
-        self.layout.addRow(clear_btn)
-        self.layout.addRow(submit_btn)
+        # self.layout = QFormLayout()
+        # self.setLayout(self.layout)
+# 
+        # for column in model_class.__table__.columns:
+        #     field_name = column.name
+        #     col_type = column.type
+        #     field_type = type(col_type)
+# 
+        #     if column.primary_key and column.autoincrement:
+        #         widget = QLineEdit()
+        #         widget.setReadOnly(True)
+        #         widget.setPlaceholderText("Autogenerado")
+        #         self.inputs[field_name] = widget
+        #         self.layout.addRow(f"{field_name} (PK)", widget)
+        #         continue
+# 
+        #     widget = None
+        #     if field_type in [String]:
+        #         widget = QLineEdit()
+        #     elif field_type in [Integer]:
+        #         widget = QSpinBox()
+        #         widget.setMaximum(1_000_000)
+        #     elif isinstance(col_type, (Float, Numeric)):
+        #         widget = QDoubleSpinBox()
+        #         widget.setMaximum(1_000_000)
+        #     elif field_type == Date:
+        #         widget = QDateEdit()
+        #         widget.setCalendarPopup(True)
+        #         widget.setDate(QDate.currentDate())
+        #     elif field_type == Time:
+        #         widget = QTimeEdit()
+        #         widget.setTime(QTime.currentTime())
+        #     elif field_type == DateTime:
+        #         date_widget = QDateEdit()
+        #         date_widget.setCalendarPopup(True)
+        #         date_widget.setDate(QDate.currentDate())
+        #         time_widget = QTimeEdit()
+        #         time_widget.setTime(QTime.currentTime())
+# 
+        #         container = QWidget()
+        #         hbox = QHBoxLayout()
+        #         hbox.addWidget(date_widget)
+        #         hbox.addWidget(time_widget)
+        #         hbox.setContentsMargins(0, 0, 0, 0)
+        #         container.setLayout(hbox)
+# 
+        #         self.inputs[field_name] = (date_widget, time_widget)
+        #         self.layout.addRow(field_name, container)
+        #         continue
+# 
+        #     if widget:
+        #         self.inputs[field_name] = widget
+        #         self.layout.addRow(field_name, widget)
+# 
+        # clear_btn = QPushButton("Limpiar")
+        # clear_btn.clicked.connect(self.clear_form)
+        # submit_btn = QPushButton("Guardar")
+        # submit_btn.clicked.connect(self.on_submit)
+# 
+        # self.layout.addRow(clear_btn)
+        # self.layout.addRow(submit_btn)
 
     def fill_from_record(self, record):
         self.record = record
