@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>F_Producto</class>
- <widget class="QWidget" name="F_Producto">
+ <class>F_Empleado</class>
+ <widget class="QWidget" name="F_Empleado">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>792</width>
-    <height>537</height>
+    <height>555</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,11 +29,11 @@
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
-      <string>Categoría</string>
+      <string>Apellido</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLineEdit" name="categoria"/>
+       <widget class="QLineEdit" name="apellido"/>
       </item>
      </layout>
     </widget>
@@ -41,11 +41,15 @@
    <item>
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>Unidad de medida</string>
+      <string>Salario</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLineEdit" name="unidad_medida"/>
+       <widget class="QDoubleSpinBox" name="salario">
+        <property name="maximum">
+         <double>9999999.990000000223517</double>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -53,47 +57,11 @@
    <item>
     <widget class="QGroupBox" name="groupBox_5">
      <property name="title">
-      <string>Precio de compra</string>
+      <string>Fecha de ingreso</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QDoubleSpinBox" name="precio_compra">
-        <property name="maximum">
-         <double>99999.990000000005239</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_6">
-     <property name="title">
-      <string>Precio de venta</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
-      <item>
-       <widget class="QDoubleSpinBox" name="precio_venta">
-        <property name="maximum">
-         <double>99999.990000000005239</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_7">
-     <property name="title">
-      <string>Cantidad de stock</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
-      <item>
-       <widget class="QSpinBox" name="cantidad_stock">
-        <property name="maximum">
-         <number>999</number>
-        </property>
-       </widget>
+       <widget class="QDateEdit" name="fecha_ingreso"/>
       </item>
      </layout>
     </widget>
@@ -131,7 +99,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
-      <string>Listado de productos</string>
+      <string>Listado de proveedores</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
