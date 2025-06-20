@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
+
 from sqlalchemy.orm import Session
 from PyQt6.QtWidgets import QWidget
 from views.forms.Turno_ui import Ui_F_Turno
 
 class logic_Turno(object):
-    def __init__(self):#, db: Session):
+    def __init__(self, db: Session):
         super().__init__()
-        #self.db = db
+        self.db = db
         self.widget = QWidget()
         self.view = Ui_F_Turno()
         self.view.setupUi(self.widget)

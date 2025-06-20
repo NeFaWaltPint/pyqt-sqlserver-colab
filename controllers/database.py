@@ -11,8 +11,6 @@ config.read('db_conf.ini')
 
 db_config = config['SQLSERVER']
 dialect = db_config['dialect']
-#username = db_config['username']
-#password = db_config['password']
 host = db_config['host']
 port = db_config['port']
 database = db_config['database']
@@ -28,19 +26,6 @@ connection_str = (
 
 params = urllib.parse.quote_plus(connection_str)
 Engine = create_engine(f"{dialect}:///?odbc_connect={params}")
-
-## Codificar el driver para la URL ODBC
-#params = urllib.parse.quote_plus(
-#    f"DRIVER={{{driver}}};"
-#    f"SERVER={host},{port};"
-#    f"DATABASE={database};"
-#    f"UID={username};"
-#    f"PWD={password}"
-#)
-#
-## Crear el engine de SQLAlchemy
-#connection_url = f"{dialect}:///?odbc_connect={params}"
-#Engine = create_engine(connection_url)
 
 # Crear una fábrica de sesiones
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=Engine)
