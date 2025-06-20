@@ -1,66 +1,47 @@
-# -*- coding: utf-8 -*-
-
-from controllers.create_drop_db import checkCreateDropDB
-from controllers.database import SessionLocal
-
-from models.models import (Base)
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
+from views.main_ui import Ui_MainWindow
 import sys
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout
-)
-
-from views.dynamic_form import DynamicForm
-from views.list import ListView
-
+from views.forms.Turno_ui import Ui_F_Turno
+from views.forms.Venta_ui import Ui_F_Venta
 
 class MainWindow(QMainWindow):
-    def __init__(self, model_classes, session):
+    def __init__(self):
         super().__init__()
-        self.setWindowTitle("Panel de Formularios")
-        self.resize(800, 600)
 
-        def handle_lambda_shit(form, sub_tabs):
-            return lambda obj: self.formSelecter(obj, form, sub_tabs)
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        # connect buttons
+        self.ui.PB_Login.clicked.connect(self.login)
+
+
+    def login(self):
+        user = self.ui.LE_User.text()
+        password = self.ui.LE_Pass.text()
+        self.ui.LE_User.setText("")
+        self.ui.LE_Pass.setText("")
+
+        if user == "admin" and password == "admin":            
+            self.ui.Tab_Views.addTab(self.injectWidget(Ui_F_Turno()), "Turno")
+            self.ui.Tab_Views.addTab(self.injectWidget(Ui_F_Venta()), "Venta")
+            self.ui.Tab_Views.setCurrentIndex(1)
+            self.ui.Tab_Views.setTabEnabled(0, False)
+            return
         
-        model_tabs = QTabWidget()
-        for model in model_classes:
-            sub_tabs = QTabWidget()
-            list_view = ListView(model, session)
-            form = DynamicForm(model, session)
-            sub_tabs.addTab(list_view, "Datos")
-            sub_tabs.addTab(form, "Formulario")
-            list_view.registro_seleccionado.connect(
-                handle_lambda_shit(form, sub_tabs)
-            )
-            container = QWidget()
-            layout = QVBoxLayout()
-            layout.addWidget(sub_tabs)
-            container.setLayout(layout)
-
-            model_tabs.addTab(container, model.__tablename__)
-
-        self.setCentralWidget(model_tabs)
+        if user == "empleado" and password == "empleado":
+            self.ui.Tab_Views.addTab(self.injectWidget(Ui_F_Venta()), "Venta")
+            self.ui.Tab_Views.setCurrentIndex(1)
+            self.ui.Tab_Views.setTabEnabled(0, False)
+            return
     
-    def formSelecter(self, obj, form, sub_tabs):
-        form.fill_from_record(obj)
-        sub_tabs.setCurrentWidget(form)
+    def injectWidget(self, someWidget):
+        w = QWidget()
+        someWidget.setupUi(w)
+        return w
+        
 
-def main():
-
-    checkCreateDropDB()
-
-    try:
-        # Crear una sesión
-        session = SessionLocal()
-
-        app = QApplication(sys.argv)
-        window = MainWindow(Base.__subclasses__(), session)
-        window.show()
-        sys.exit(app.exec())
-    except Exception as e:
-        print(f"Ups! Error: {e}")
-    finally:
-        session.close()
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    app.exec()
