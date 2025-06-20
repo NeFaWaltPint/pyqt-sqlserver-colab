@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
         # connect buttons
         self.ui.PB_Login.clicked.connect(self.login)
 
-        self.views = []
+        self.viewsWlogic = []
 
 
     def login(self):
@@ -28,13 +28,13 @@ class MainWindow(QMainWindow):
         self.ui.LE_Pass.setText("")
 
         if user == config['USERS']['admin'] and password == config['PASSWORDS']['admin']:
-            session = SessionLocal()
+            sessionDB = SessionLocal()
             try:
 
-                self.views.append(logic_Turno(session))
-                self.ui.Tab_Views.addTab(self.views[-1].getView(), "Turno")
-                self.views.append(logic_Venta(session))
-                self.ui.Tab_Views.addTab(self.views[-1].getView(), "Venta")
+                self.viewsWlogic.append(logic_Turno(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Turno")
+                self.viewsWlogic.append(logic_Venta(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Venta")
 
                 self.ui.Tab_Views.setCurrentIndex(1)
                 self.ui.Tab_Views.setTabEnabled(0, False)
@@ -42,22 +42,22 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 print(f"Ups! Error: {e}")
             finally:
-                session.close()
+                sessionDB.close()
             return
         
         if user == config['USERS']['empleado'] and password == config['PASSWORDS']['empleado']:
-            session = SessionLocal()
+            sessionDB = SessionLocal()
             try:
 
-                self.views.append(logic_Venta(session))
-                self.ui.Tab_Views.addTab(self.views[-1].getView(), "Venta")
+                self.viewsWlogic.append(logic_Venta(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Venta")
                 self.ui.Tab_Views.setCurrentIndex(1)
                 self.ui.Tab_Views.setTabEnabled(0, False)
             
             except Exception as e:
                 print(f"Ups! Error: {e}")
             finally:
-                session.close()
+                sessionDB.close()
             return    
         
 
