@@ -34,42 +34,48 @@ class logic_HorarioEmpleado(object):
     
     def loadSelects(self):
         self.empleados = self.db.query(Empleado).all()
-        self.view.id_empleado.addItems([str(empleado.nombre) for empleado in self.empleados])
+        self.view.id_empleado.addItem("Seleccione un empleado", userData=None)
+        for empleado in self.empleados:
+            self.view.id_empleado.addItem(str(empleado.nombre), userData=empleado.id_empleado)
         self.turnos = self.db.query(Turno).all()
-        self.view.id_turno.addItems([str(turno.nombre_turno) for turno in self.turnos])
-    
+        self.view.id_turno.addItem("Seleccione un turno", userData=None)
+        for turno in self.turnos:
+            self.view.id_turno.addItem(str(turno.nombre_turno), userData=turno.id_turno)
+            
     def buildTable(self):
-        pass
-        # self.columnas = MetodoPago.__table__.columns.keys()
-        # self.view.tableWidget.setColumnCount(len(self.columnas))
-        # self.view.tableWidget.setHorizontalHeaderLabels(self.columnas)
+        self.columnas = HorarioEmpleado.__table__.columns.keys()
+        self.view.tableWidget.setColumnCount(len(self.columnas))
+        self.view.tableWidget.setHorizontalHeaderLabels(self.columnas)
     
     def populateTable(self):
-        pass
-        # self.registros = self.db.query(MetodoPago).all()
-        # self.view.tableWidget.setRowCount(len(self.registros))
-# 
-        # for fila_idx, objeto in enumerate(self.registros):
-        #     for col_idx, columna in enumerate(self.columnas):
-        #         valor = getattr(objeto, columna)
-        #         self.view.tableWidget.setItem(fila_idx, col_idx, QTableWidgetItem(str(valor)))
+        self.registros = self.db.query(HorarioEmpleado).all()
+        self.view.tableWidget.setRowCount(len(self.registros))
+
+        for fila_idx, objeto in enumerate(self.registros):
+            for col_idx, columna in enumerate(self.columnas):
+                valor = getattr(objeto, columna)
+                self.view.tableWidget.setItem(fila_idx, col_idx, QTableWidgetItem(str(valor)))
 
     def clear(self):
-        # self.view.descripcion.clear()
+        self.view.id_empleado.setCurrentIndex(0)
+        self.view.id_turno.setCurrentIndex(0)
         self.isEdit = False
 
     def save(self):
-        # datasave = MetodoPago(
-        #     descripcion = self.view.descripcion.text()
-        # )
-# 
-        # if self.isEdit:
-        #     datasave.id_metodo_pago = self.registros[self.view.tableWidget.currentRow()].id_metodo_pago
-        #     self.db.merge(datasave)
-        # else:
-        #     self.db.add(datasave)
-        #     
-        # self.db.commit()
+        empleado = self.view.id_empleado.currentData()
+        turno = self.view.id_turno.currentData()
+
+        datasave = HorarioEmpleado(
+            id_empleado = empleado,
+            id_turno = turno
+        )
+ 
+        if self.isEdit:
+            self.db.merge(datasave)
+        else:
+            self.db.add(datasave)
+            
+        self.db.commit()
 
         self.clear()
         self.populateTable()
@@ -77,7 +83,8 @@ class logic_HorarioEmpleado(object):
     def edit(self):
         actual_row = self.view.tableWidget.currentRow()
         if actual_row >= 0 and actual_row < len(self.registros):
-        #     self.view.descripcion.setText(self.registros[actual_row].descripcion)
+            self.view.id_empleado.setCurrentIndex(self.view.id_empleado.findData(self.registros[actual_row].id_empleado))
+            self.view.id_turno.setCurrentIndex(self.view.id_turno.findData(self.registros[actual_row].id_turno))
             self.isEdit = True
     
     def delete(self):
