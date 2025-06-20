@@ -13,9 +13,11 @@ class Ui_F_Venta(object):
     def setupUi(self, F_Venta):
         F_Venta.setObjectName("F_Venta")
         F_Venta.resize(400, 300)
+        self.verticalLayout = QtWidgets.QVBoxLayout(F_Venta)
+        self.verticalLayout.setObjectName("verticalLayout")
         self.groupBox = QtWidgets.QGroupBox(parent=F_Venta)
-        self.groupBox.setGeometry(QtCore.QRect(50, 40, 120, 80))
         self.groupBox.setObjectName("groupBox")
+        self.verticalLayout.addWidget(self.groupBox)
 
         self.retranslateUi(F_Venta)
         QtCore.QMetaObject.connectSlotsByName(F_Venta)

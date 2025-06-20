@@ -5,6 +5,7 @@ from controllers.create_drop_db import checkCreateDropDB
 from controllers.database import SessionLocal, config
 from controllers.forms.Proveedor import logic_Proveedor
 from controllers.forms.empleado import logic_Empleado
+from controllers.forms.horarioempleado import logic_HorarioEmpleado
 from controllers.forms.metodopago import logic_MetodoPago
 from controllers.forms.producto import logic_Producto
 from controllers.forms.turno import logic_Turno
@@ -37,10 +38,12 @@ class MainWindow(QMainWindow):
 
                 self.viewsWlogic.append(logic_Turno(sessionDB))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Turno")
-                self.viewsWlogic.append(logic_MetodoPago(sessionDB))
-                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Método de Pago")
                 self.viewsWlogic.append(logic_Empleado(sessionDB))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Empleado")
+                self.viewsWlogic.append(logic_HorarioEmpleado(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Horario Empleado")
+                self.viewsWlogic.append(logic_MetodoPago(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Método de Pago")
                 self.viewsWlogic.append(logic_Venta(sessionDB))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Venta")
                 self.viewsWlogic.append(logic_Proveedor(sessionDB))
