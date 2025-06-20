@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
+from controllers.forms.turno import logic_Turno
+from controllers.forms.venta import logic_Venta
 from views.main_ui import Ui_MainWindow
 import sys
-from views.forms.Turno_ui import Ui_F_Turno
-from views.forms.Venta_ui import Ui_F_Venta
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -14,6 +14,8 @@ class MainWindow(QMainWindow):
         # connect buttons
         self.ui.PB_Login.clicked.connect(self.login)
 
+        self.views = []
+
 
     def login(self):
         user = self.ui.LE_User.text()
@@ -21,23 +23,27 @@ class MainWindow(QMainWindow):
         self.ui.LE_User.setText("")
         self.ui.LE_Pass.setText("")
 
-        if user == "admin" and password == "admin":            
-            self.ui.Tab_Views.addTab(self.injectWidget(Ui_F_Turno()), "Turno")
-            self.ui.Tab_Views.addTab(self.injectWidget(Ui_F_Venta()), "Venta")
+        if user == "admin" and password == "admin":
+            self.views.append(logic_Turno())
+            self.ui.Tab_Views.addTab(self.views[-1].getView(), "Turno")
+            self.views.append(logic_Venta())
+            self.ui.Tab_Views.addTab(self.views[-1].getView(), "Venta")
+
             self.ui.Tab_Views.setCurrentIndex(1)
             self.ui.Tab_Views.setTabEnabled(0, False)
             return
         
         if user == "empleado" and password == "empleado":
-            self.ui.Tab_Views.addTab(self.injectWidget(Ui_F_Venta()), "Venta")
+            self.views.append(logic_Venta())
+            self.ui.Tab_Views.addTab(self.views[-1].getView(), "Venta")
             self.ui.Tab_Views.setCurrentIndex(1)
             self.ui.Tab_Views.setTabEnabled(0, False)
             return
     
-    def injectWidget(self, someWidget):
+    def injectWidgetinTab(self, someWidget, tabName):
         w = QWidget()
         someWidget.setupUi(w)
-        return w
+        self.ui.Tab_Views.addTab(w, tabName)
         
 
 if __name__ == '__main__':

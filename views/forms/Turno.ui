@@ -21,7 +21,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLineEdit" name="lineEdit"/>
+       <widget class="QLineEdit" name="nombre_turno"/>
       </item>
      </layout>
     </widget>
@@ -33,7 +33,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QDateEdit" name="dateEdit"/>
+       <widget class="QDateEdit" name="fecha_inicio"/>
       </item>
      </layout>
     </widget>
@@ -45,20 +45,20 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QDateEdit" name="dateEdit_2"/>
+       <widget class="QDateEdit" name="fecha_fin"/>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="PB_Limpiar">
      <property name="text">
       <string>Limpiar</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="PB_Guardar">
      <property name="text">
       <string>Guardar</string>
      </property>
@@ -81,21 +81,21 @@
     <widget class="QTableView" name="tableView"/>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="PB_Actualizar">
      <property name="text">
       <string>Actualizar</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton_4">
+    <widget class="QPushButton" name="PB_Editar">
      <property name="text">
       <string>Editar</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton_5">
+    <widget class="QPushButton" name="PB_Eliminar">
      <property name="text">
       <string>Eliminar</string>
      </property>
