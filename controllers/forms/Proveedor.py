@@ -4,15 +4,15 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from PyQt6.QtWidgets import QWidget, QTableWidgetItem
 from PyQt6.QtCore import QDate
-from views.forms.Turno_ui import Ui_F_Turno
-from models.models import Turno
+from views.forms.Proveedor_ui import Ui_F_Proveedor
+from models.models import Proveedor
 
-class logic_Turno(object):
+class logic_Proveedor(object):
     def __init__(self, db: Session):
         super().__init__()
         self.db = db
         self.widget = QWidget()
-        self.view = Ui_F_Turno()
+        self.view = Ui_F_Proveedor()
         self.view.setupUi(self.widget)
 
         self.linkActions()
@@ -32,12 +32,12 @@ class logic_Turno(object):
         self.view.PB_Eliminar.clicked.connect(self.delete)
     
     def buildTable(self):
-        self.columnas = Turno.__table__.columns.keys()
+        self.columnas = Proveedor.__table__.columns.keys()
         self.view.tableWidget.setColumnCount(len(self.columnas))
         self.view.tableWidget.setHorizontalHeaderLabels(self.columnas)
     
     def populateTable(self):
-        self.registros = self.db.query(Turno).all()
+        self.registros = self.db.query(Proveedor).all()
         self.view.tableWidget.setRowCount(len(self.registros))
 
         for fila_idx, objeto in enumerate(self.registros):
@@ -46,20 +46,22 @@ class logic_Turno(object):
                 self.view.tableWidget.setItem(fila_idx, col_idx, QTableWidgetItem(str(valor)))
 
     def clear(self):
-        self.view.nombre_turno.clear()
-        self.view.fecha_inicio.setDate(QDate(2000, 1, 1))
-        self.view.fecha_fin.setDate(QDate(2000, 1, 1))
+        self.view.nombre.clear()
+        self.view.telefono.clear()
+        self.view.correo.clear()
+        self.view.direccion.clear()
         self.isEdit = False
 
     def save(self):
-        datasave = Turno(
-            nombre_turno=self.view.nombre_turno.text(),
-            fecha_inicio=datetime.combine(self.view.fecha_inicio.date().toPyDate(), datetime.min.time()),
-            fecha_fin=datetime.combine(self.view.fecha_fin.date().toPyDate(), datetime.min.time())
+        datasave = Proveedor(
+            nombre = self.view.nombre.text(),
+            telefono = self.view.telefono.text(),
+            correo = self.view.correo.text(),
+            direccion = self.view.direccion.text()
         )
 
         if self.isEdit:
-            datasave.id_turno = self.registros[self.view.tableWidget.currentRow()].id_turno    
+            datasave.id_proveedor = self.registros[self.view.tableWidget.currentRow()].id_proveedor
             self.db.merge(datasave)
         else:
             self.db.add(datasave)
@@ -72,9 +74,10 @@ class logic_Turno(object):
     def edit(self):
         actual_row = self.view.tableWidget.currentRow()
         if actual_row >= 0 and actual_row < len(self.registros):
-            self.view.nombre_turno.setText(self.registros[actual_row].nombre_turno)
-            self.view.fecha_inicio.setDate(self.registros[actual_row].fecha_inicio)
-            self.view.fecha_fin.setDate(self.registros[actual_row].fecha_fin)
+            self.view.nombre.setText(self.registros[actual_row].nombre)
+            self.view.telefono.setText(self.registros[actual_row].telefono)
+            self.view.correo.setText(self.registros[actual_row].correo)
+            self.view.direccion.setText(self.registros[actual_row].direccion)
             self.isEdit = True
     
     def delete(self):

@@ -3,6 +3,9 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from controllers.create_drop_db import checkCreateDropDB
 from controllers.database import SessionLocal, config
+from controllers.forms.Proveedor import logic_Proveedor
+from controllers.forms.metodopago import logic_MetodoPago
+from controllers.forms.producto import logic_Producto
 from controllers.forms.turno import logic_Turno
 from controllers.forms.venta import logic_Venta
 from views.main_ui import Ui_MainWindow
@@ -33,8 +36,14 @@ class MainWindow(QMainWindow):
 
                 self.viewsWlogic.append(logic_Turno(sessionDB))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Turno")
+                self.viewsWlogic.append(logic_MetodoPago(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Método de Pago")
                 self.viewsWlogic.append(logic_Venta(sessionDB))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Venta")
+                self.viewsWlogic.append(logic_Proveedor(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Proveedor")
+                self.viewsWlogic.append(logic_Producto(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Producto")
 
                 self.ui.Tab_Views.setCurrentIndex(1)
                 self.ui.Tab_Views.setTabEnabled(0, False)
