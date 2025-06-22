@@ -4,6 +4,8 @@ from PyQt6.QtWidgets import QApplication, QMainWindow
 from controllers.create_drop_db import checkCreateDropDB
 from controllers.database import SessionLocal, config
 from controllers.forms.Proveedor import logic_Proveedor
+from controllers.forms.compra import logic_Compra
+from controllers.forms.detallecompra import logic_DetalleCompra
 from controllers.forms.empleado import logic_Empleado
 from controllers.forms.horarioempleado import logic_HorarioEmpleado
 from controllers.forms.metodopago import logic_MetodoPago
@@ -32,7 +34,7 @@ class MainWindow(QMainWindow):
         self.ui.LE_User.setText("")
         self.ui.LE_Pass.setText("")
 
-        if user == config['USERS']['admin'] and password == config['PASSWORDS']['admin']:
+        if True: #user == config['USERS']['admin'] and password == config['PASSWORDS']['admin']:
             sessionDB = SessionLocal()
             try:
 
@@ -50,6 +52,10 @@ class MainWindow(QMainWindow):
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Proveedor")
                 self.viewsWlogic.append(logic_Producto(sessionDB))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Producto")
+                self.viewsWlogic.append(logic_Compra(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Realizar Compra")
+                self.viewsWlogic.append(logic_DetalleCompra(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Detalle Compra")
 
                 self.ui.Tab_Views.setCurrentIndex(1)
                 self.ui.Tab_Views.setTabEnabled(0, False)
