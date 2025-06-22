@@ -20,7 +20,11 @@ class logic_HorarioEmpleado(object):
         self.buildTable()
         self.populateTable()
         
-        self.isEdit = False
+        self.isEdit = {
+            "isEdit": False,
+            "id_empleado": None,
+            "id_turno": None
+        }
         
     def getView(self):
         return self.widget
@@ -36,14 +40,14 @@ class logic_HorarioEmpleado(object):
         self.empleados = self.db.query(Empleado).all()
         self.view.id_empleado.addItem("Seleccione un empleado", userData=None)
         for empleado in self.empleados:
-            self.view.id_empleado.addItem(str(empleado.nombre), userData=empleado.id_empleado)
+            self.view.id_empleado.addItem(str(empleado.nombre) + " " + str(empleado.apellido), userData=empleado.id_empleado)
         self.turnos = self.db.query(Turno).all()
         self.view.id_turno.addItem("Seleccione un turno", userData=None)
         for turno in self.turnos:
             self.view.id_turno.addItem(str(turno.nombre_turno), userData=turno.id_turno)
             
     def buildTable(self):
-        self.columnas = HorarioEmpleado.__table__.columns.keys()
+        self.columnas = ["Empleado", "Turno"]
         self.view.tableWidget.setColumnCount(len(self.columnas))
         self.view.tableWidget.setHorizontalHeaderLabels(self.columnas)
     
@@ -52,14 +56,19 @@ class logic_HorarioEmpleado(object):
         self.view.tableWidget.setRowCount(len(self.registros))
 
         for fila_idx, objeto in enumerate(self.registros):
-            for col_idx, columna in enumerate(self.columnas):
-                valor = getattr(objeto, columna)
-                self.view.tableWidget.setItem(fila_idx, col_idx, QTableWidgetItem(str(valor)))
+            empleado = next((empleado for empleado in self.empleados if empleado.id_empleado == objeto.id_empleado), None)
+            turno = next((turno for turno in self.turnos if turno.id_turno == objeto.id_turno), None)
+            self.view.tableWidget.setItem(fila_idx, 0, QTableWidgetItem(str(empleado.nombre) + " " + str(empleado.apellido)))
+            self.view.tableWidget.setItem(fila_idx, 1, QTableWidgetItem(str(turno.nombre_turno)))
 
     def clear(self):
         self.view.id_empleado.setCurrentIndex(0)
         self.view.id_turno.setCurrentIndex(0)
-        self.isEdit = False
+        self.isEdit = {
+            "isEdit": False,
+            "id_empleado": None,
+            "id_turno": None
+        }
 
     def save(self):
         empleado = self.view.id_empleado.currentData()
@@ -70,12 +79,21 @@ class logic_HorarioEmpleado(object):
             id_turno = turno
         )
  
-        if self.isEdit:
-            self.db.merge(datasave)
+        if self.isEdit["isEdit"]:
+            datadelete = self.db.query(HorarioEmpleado).filter_by(
+                id_empleado=self.isEdit["id_empleado"],
+                id_turno=self.isEdit["id_turno"]
+            ).first()
+
+            if datadelete:
+                self.db.delete(datadelete)
+                self.db.commit()
+
+            self.db.add(datasave)
+            self.db.commit()
         else:
             self.db.add(datasave)
-            
-        self.db.commit()
+            self.db.commit()
 
         self.clear()
         self.populateTable()
@@ -85,7 +103,11 @@ class logic_HorarioEmpleado(object):
         if actual_row >= 0 and actual_row < len(self.registros):
             self.view.id_empleado.setCurrentIndex(self.view.id_empleado.findData(self.registros[actual_row].id_empleado))
             self.view.id_turno.setCurrentIndex(self.view.id_turno.findData(self.registros[actual_row].id_turno))
-            self.isEdit = True
+            self.isEdit = {
+                "isEdit": True,
+                "id_empleado": self.registros[actual_row].id_empleado,
+                "id_turno": self.registros[actual_row].id_turno
+            }
     
     def delete(self):
         actual_row = self.view.tableWidget.currentRow()

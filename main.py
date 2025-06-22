@@ -12,6 +12,7 @@ from controllers.forms.metodopago import logic_MetodoPago
 from controllers.forms.producto import logic_Producto
 from controllers.forms.turno import logic_Turno
 from controllers.forms.venta import logic_Venta
+from models.models import Empleado
 from views.main_ui import Ui_MainWindow
 import sys
 
@@ -34,7 +35,7 @@ class MainWindow(QMainWindow):
         self.ui.LE_User.setText("")
         self.ui.LE_Pass.setText("")
 
-        if True: #user == config['USERS']['admin'] and password == config['PASSWORDS']['admin']:
+        if user == config['USERS']['admin'] and password == config['PASSWORDS']['admin']:
             sessionDB = SessionLocal()
             try:
 
@@ -66,7 +67,9 @@ class MainWindow(QMainWindow):
                 sessionDB.close()
             return
         
-        if user == config['USERS']['empleado'] and password == config['PASSWORDS']['empleado']:
+        empleado = SessionLocal().query(Empleado).filter(Empleado.nombre == user).first()
+        print(empleado)
+        if empleado and password == config['PASSWORDS']['empleado']:
             sessionDB = SessionLocal()
             try:
 
