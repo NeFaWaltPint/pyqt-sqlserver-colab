@@ -76,10 +76,13 @@ class logic_Venta(object):
         self.view.tableWidget.setItem(fila, 2, QTableWidgetItem(str(precio)))
         self.view.tableWidget.setItem(fila, 3, QTableWidgetItem(str(subtotal)))
 
+        self.calcTotal()
+
     def remove(self):
         actual_row = self.view.tableWidget.currentRow()
         if actual_row >= 0:
             self.view.tableWidget.removeRow(actual_row)
+        self.calcTotal()
     
     def save(self):
         detalles = []
@@ -135,3 +138,11 @@ class logic_Venta(object):
         self.view.cantidad.setValue(0)
         self.view.metodo_pago.setCurrentIndex(0)
         self.view.tableWidget.setRowCount(0)
+        self.view.L_total.setText("$ 0.00")
+    
+    def calcTotal(self):
+        total = 0
+        for row in range(self.view.tableWidget.rowCount()):
+            subtotal = float(self.view.tableWidget.item(row, 3).text())
+            total += subtotal
+        self.view.L_total.setText("$ " + str(total))

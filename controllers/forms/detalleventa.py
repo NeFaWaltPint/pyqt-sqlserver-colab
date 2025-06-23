@@ -53,8 +53,15 @@ class logic_DetalleVenta(object):
                 else:
                     self.view.tableWidget_1.setItem(fila_idx, 1, QTableWidgetItem(str("Admin")))
             self.view.tableWidget_1.setItem(fila_idx, 2, QTableWidgetItem(str(objeto.total_venta)))
-            self.view.tableWidget_1.setItem(fila_idx, 3, QTableWidgetItem(str(objeto.id_metodo_pago)))
-            self.view.tableWidget_1.setItem(fila_idx, 4, QTableWidgetItem(str(objeto.id_mesa)))
+            metodo_pago = self.db.query(MetodoPago).get(objeto.id_metodo_pago) if objeto.id_metodo_pago else None
+            if metodo_pago != None:
+                self.view.tableWidget_1.setItem(fila_idx, 3, QTableWidgetItem(str(metodo_pago.descripcion)))
+            else:
+                self.view.tableWidget_1.setItem(fila_idx, 3, QTableWidgetItem(str("-")))
+            if objeto.id_mesa != None:
+                self.view.tableWidget_1.setItem(fila_idx, 4, QTableWidgetItem(str(objeto.id_mesa)))
+            else:
+                self.view.tableWidget_1.setItem(fila_idx, 4, QTableWidgetItem(str("Sin mesa")))
             self.view.tableWidget_1.setItem(fila_idx, 5, QTableWidgetItem(str(objeto.fecha)))
 
     def populateTable2(self, row, _):

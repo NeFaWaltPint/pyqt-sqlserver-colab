@@ -9,6 +9,8 @@ from controllers.forms.detallecompra import logic_DetalleCompra
 from controllers.forms.detalleventa import logic_DetalleVenta
 from controllers.forms.empleado import logic_Empleado
 from controllers.forms.horarioempleado import logic_HorarioEmpleado
+from controllers.forms.juego import logic_Juego
+from controllers.forms.mesabillar import logic_MesaBillar
 from controllers.forms.metodopago import logic_MetodoPago
 from controllers.forms.producto import logic_Producto
 from controllers.forms.turno import logic_Turno
@@ -60,6 +62,10 @@ class MainWindow(QMainWindow):
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Realizar Compra")
                 self.viewsWlogic.append(logic_DetalleCompra(sessionDB))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Detalle Compra")
+                self.viewsWlogic.append(logic_Juego(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Juego")
+                self.viewsWlogic.append(logic_MesaBillar(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Mesa Billar")
 
                 self.ui.Tab_Views.setCurrentIndex(1)
                 self.ui.Tab_Views.setTabEnabled(0, False)
