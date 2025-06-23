@@ -38,10 +38,13 @@ class logic_HorarioEmpleado(object):
     
     def loadSelects(self):
         self.empleados = self.db.query(Empleado).all()
+        self.view.id_empleado.clear()
         self.view.id_empleado.addItem("Seleccione un empleado", userData=None)
         for empleado in self.empleados:
             self.view.id_empleado.addItem(str(empleado.nombre) + " " + str(empleado.apellido), userData=empleado.id_empleado)
+        
         self.turnos = self.db.query(Turno).all()
+        self.view.id_turno.clear()
         self.view.id_turno.addItem("Seleccione un turno", userData=None)
         for turno in self.turnos:
             self.view.id_turno.addItem(str(turno.nombre_turno), userData=turno.id_turno)

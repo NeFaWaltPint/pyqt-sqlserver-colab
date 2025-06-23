@@ -56,10 +56,3 @@ class logic_DetalleCompra(object):
                 self.view.tableWidget_2.setItem(fila_idx, 1, QTableWidgetItem(str(detalle.cantidad)))
                 self.view.tableWidget_2.setItem(fila_idx, 2, QTableWidgetItem(str(detalle.precio_unitario)))
                 self.view.tableWidget_2.setItem(fila_idx, 3, QTableWidgetItem(str(detalle.cantidad * detalle.precio_unitario)))
-
-    def save(self):
-        print("Guardar")
-
-    def clear(self):
-        
-        print("Limpiar")

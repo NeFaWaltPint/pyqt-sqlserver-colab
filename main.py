@@ -6,6 +6,7 @@ from controllers.database import SessionLocal, config
 from controllers.forms.Proveedor import logic_Proveedor
 from controllers.forms.compra import logic_Compra
 from controllers.forms.detallecompra import logic_DetalleCompra
+from controllers.forms.detalleventa import logic_DetalleVenta
 from controllers.forms.empleado import logic_Empleado
 from controllers.forms.horarioempleado import logic_HorarioEmpleado
 from controllers.forms.metodopago import logic_MetodoPago
@@ -49,6 +50,8 @@ class MainWindow(QMainWindow):
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Método de Pago")
                 self.viewsWlogic.append(logic_Venta(sessionDB))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Venta")
+                self.viewsWlogic.append(logic_DetalleVenta(sessionDB))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Detalle Venta")
                 self.viewsWlogic.append(logic_Proveedor(sessionDB))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Proveedor")
                 self.viewsWlogic.append(logic_Producto(sessionDB))
@@ -68,13 +71,15 @@ class MainWindow(QMainWindow):
             return
         
         empleado = SessionLocal().query(Empleado).filter(Empleado.nombre == user).first()
-        print(empleado)
         if empleado and password == config['PASSWORDS']['empleado']:
             sessionDB = SessionLocal()
             try:
 
-                self.viewsWlogic.append(logic_Venta(sessionDB))
+                self.viewsWlogic.append(logic_Venta(sessionDB, empleado))
                 self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Venta")
+                self.viewsWlogic.append(logic_DetalleVenta(sessionDB, empleado))
+                self.ui.Tab_Views.addTab(self.viewsWlogic[-1].getView(), "Detalle Venta")
+
                 self.ui.Tab_Views.setCurrentIndex(1)
                 self.ui.Tab_Views.setTabEnabled(0, False)
             
