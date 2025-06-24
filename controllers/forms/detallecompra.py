@@ -40,7 +40,10 @@ class logic_DetalleCompra(object):
         for fila_idx, objeto in enumerate(self.registros_1):
             self.view.tableWidget_1.setItem(fila_idx, 0, QTableWidgetItem(str(objeto.id_compra)))
             proveedor = self.db.query(Proveedor).get(objeto.id_proveedor)
-            self.view.tableWidget_1.setItem(fila_idx, 1, QTableWidgetItem(str(proveedor.nombre)))
+            if proveedor != None:                
+                self.view.tableWidget_1.setItem(fila_idx, 1, QTableWidgetItem(str(proveedor.nombre)))
+            else:
+                self.view.tableWidget_1.setItem(fila_idx, 1, QTableWidgetItem(str("-")))
             self.view.tableWidget_1.setItem(fila_idx, 2, QTableWidgetItem(str(objeto.total_compra)))
             self.view.tableWidget_1.setItem(fila_idx, 3, QTableWidgetItem(str(objeto.fecha)))
     

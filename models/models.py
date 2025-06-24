@@ -45,7 +45,7 @@ class Empleado(Base):
 class MesaBillar(Base):
     __tablename__ = 'MesaBillar'
     id_mesa = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    id_empleado = Column(Integer, ForeignKey('Empleado.id_empleado'), nullable=True, autoincrement=False)
+    #id_empleado = Column(Integer, ForeignKey('Empleado.id_empleado'), nullable=True, autoincrement=False)
     estado = Column(String(50), nullable=True, autoincrement=False)
 
     # relación directa

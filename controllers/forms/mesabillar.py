@@ -16,7 +16,7 @@ class logic_MesaBillar(object):
         self.view.setupUi(self.widget)
 
         self.linkActions()
-        self.loadSelects()
+      #  self.loadSelects()
         self.buildTable()
         self.populateTable()
         
@@ -32,12 +32,12 @@ class logic_MesaBillar(object):
         self.view.PB_Editar.clicked.connect(self.edit)
         self.view.PB_Eliminar.clicked.connect(self.delete)
     
-    def loadSelects(self):
-        self.empleados = self.db.query(Empleado).all()
-        self.view.id_empleado.clear()
-        self.view.id_empleado.addItem("Seleccione un empleado", userData=None)
-        for empleado in self.empleados:
-            self.view.id_empleado.addItem(str(empleado.nombre) + " " + str(empleado.apellido), userData=empleado.id_empleado)
+    #def loadSelects(self):
+    #    self.empleados = self.db.query(Empleado).all()
+    #    self.view.id_empleado.clear()
+    #    self.view.id_empleado.addItem("Seleccione un empleado", userData=None)
+    #    for empleado in self.empleados:
+    #        self.view.id_empleado.addItem(str(empleado.nombre) + " " + str(empleado.apellido), userData=empleado.id_empleado)
 
     def buildTable(self):
         self.columnas = MesaBillar.__table__.columns.keys()
@@ -51,21 +51,21 @@ class logic_MesaBillar(object):
         for fila_idx, objeto in enumerate(self.registros):
             for col_idx, columna in enumerate(self.columnas):
                 valor = getattr(objeto, columna)
-                if columna == "id_empleado":
-                    empleado = next((empleado for empleado in self.empleados if empleado.id_empleado == valor), None)
-                    valor = str(empleado.nombre) + " " + str(empleado.apellido)
+     #           if columna == "id_empleado":
+     #               empleado = next((empleado for empleado in self.empleados if empleado.id_empleado == valor), None)
+     #               valor = str(empleado.nombre) + " " + str(empleado.apellido)
                 self.view.tableWidget.setItem(fila_idx, col_idx, QTableWidgetItem(str(valor)))
 
     def clear(self):
-        self.view.id_empleado.setCurrentIndex(0)
+       # self.view.id_empleado.setCurrentIndex(0)
         self.view.estado.setText("")
         self.isEdit = False
 
     def save(self):
-        empleado = self.view.id_empleado.currentData()
+     #   empleado = self.view.id_empleado.currentData()
 
         datasave = MesaBillar(
-            id_empleado = empleado,
+    #        id_empleado = empleado,
             estado = self.view.estado.text()
         )
 
@@ -83,7 +83,7 @@ class logic_MesaBillar(object):
     def edit(self):
         actual_row = self.view.tableWidget.currentRow()
         if actual_row >= 0 and actual_row < len(self.registros):
-            self.view.id_empleado.setCurrentIndex(self.view.id_empleado.findData(self.registros[actual_row].id_empleado))
+      #      self.view.id_empleado.setCurrentIndex(self.view.id_empleado.findData(self.registros[actual_row].id_empleado))
             self.view.estado.setText(self.registros[actual_row].estado)
             self.isEdit = True
     
