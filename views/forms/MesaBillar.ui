@@ -15,18 +15,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox_5">
-     <property name="title">
-      <string>Empleado</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
-      <item>
-       <widget class="QComboBox" name="id_empleado"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Estado</string>
@@ -71,7 +59,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
-      <string>Listado de Juegos</string>
+      <string>Listado de mesas</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
